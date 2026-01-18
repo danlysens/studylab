@@ -56,7 +56,6 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            
         }
 
         .auth-modal {
@@ -464,6 +463,8 @@
                 border-left: none;
                 border-radius: 16px;
                 margin-bottom: 1.5rem;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: none;
             }
 
             .sidebar.open {
@@ -485,6 +486,10 @@
 
             .sidebar-wrapper {
                 width: 320px;
+            }
+            
+            .close-sidebar {
+                display: none;
             }
         }
 
@@ -1388,29 +1393,39 @@
                 });
             });
 
-            // Sidebar Toggle
-            sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.add('open');
-                overlay.classList.add('show');
-            });
+            // Sidebar Toggle - FIXED!
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', () => {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                    document.body.style.overflow = 'hidden'; // Prevent scrolling when sidebar is open
+                });
+            }
 
-            // Close Sidebar
-            closeSidebar.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('show');
-            });
+            // Close Sidebar - FIXED!
+            if (closeSidebar) {
+                closeSidebar.addEventListener('click', () => {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                    document.body.style.overflow = ''; // Restore scrolling
+                });
+            }
 
-            // Close sidebar when clicking overlay
-            overlay.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('show');
-            });
+            // Close sidebar when clicking overlay - FIXED!
+            if (overlay) {
+                overlay.addEventListener('click', () => {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                    document.body.style.overflow = ''; // Restore scrolling
+                });
+            }
 
-            // Close sidebar on escape key
+            // Close sidebar on escape key - FIXED!
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     sidebar.classList.remove('open');
                     overlay.classList.remove('show');
+                    document.body.style.overflow = ''; // Restore scrolling
                 }
             });
         }
