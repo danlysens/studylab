@@ -119,7 +119,6 @@
         }
 
         .btn {
-            width: 100%;
             padding: 0.75rem;
             border: none;
             border-radius: 12px;
@@ -303,6 +302,7 @@
             display: flex;
             gap: 0.5rem;
             margin-bottom: 1rem;
+            align-items: center;
         }
 
         .form-row input {
@@ -310,6 +310,17 @@
             padding: 0.75rem;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
+        }
+
+        .add-task-btn {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            min-width: 40px;
         }
 
         .task-list {
@@ -363,6 +374,11 @@
             cursor: pointer;
             font-size: 1rem;
             padding: 0.25rem;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .note-card {
@@ -382,6 +398,12 @@
             border: none;
             color: var(--gray);
             cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
         }
 
         textarea {
@@ -663,7 +685,7 @@
                             <div class="task-tab-content active" id="regularTasksTab">
                                 <div class="form-row">
                                     <input type="text" id="taskInput" placeholder="Add a new task...">
-                                    <button class="btn btn-primary" id="addTaskBtn" style="flex: 0 0 auto; padding: 0 1rem;">➕</button>
+                                    <button class="btn btn-primary add-task-btn" id="addTaskBtn">➕</button>
                                 </div>
                                 <div id="tasksList" class="task-list"></div>
                             </div>
@@ -672,7 +694,7 @@
                             <div class="task-tab-content hidden" id="dailyTasksTab">
                                 <div class="form-row">
                                     <input type="text" id="dailyTaskInput" placeholder="Add a daily task...">
-                                    <button class="btn btn-primary" id="addDailyTaskBtn" style="flex: 0 0 auto; padding: 0 1rem;">➕</button>
+                                    <button class="btn btn-primary add-task-btn" id="addDailyTaskBtn">➕</button>
                                 </div>
                                 <div id="dailyTasksList" class="task-list"></div>
                             </div>
