@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌱 StudyLab</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #9ca3af;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #fdf2f8 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        /* Mobile-first styles */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-bottom: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            
+        }
+
+        .auth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.75rem;
+            text-align: center;
+            background: #f1f5f9;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .auth-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .tabs {
+            display: flex;
+            overflow-x: auto;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem 0;
+        }
+
+        .tab-button {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.75rem;
+            background: transparent;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .tab-button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-button:not(.active):hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -var(--sidebar-width);
+            width: var(--sidebar-width);
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-left: 1px solid rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 999;
+        }
+
+        .sidebar.open {
+            right: 0;
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            z-index: 998;
+        }
+
+        .close-sidebar {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .island-progress {
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .island-emoji {
+            font-size: 3rem;
+            margin: 1rem 0;
+        }
+
+        .level-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .progress-container {
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 12px;
+            height: 12px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            height: 100%;
+            border-radius: 12px;
+            transition: width 0.5s ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-row input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+        }
+
+        .task-list {
+            margin-top: 1.5rem;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            background: #f8fafc;
+            transition: all 0.2s ease;
+        }
+
+        .task-item:hover {
+            background: #f1f5f9;
+        }
+
+        .task-status {
+            font-size: 1.2rem;
+            margin-right: 0.75rem;
+            cursor: pointer;
+        }
+
+        .task-text {
+            flex: 1;
+            margin-right: 0.5rem;
+        }
+
+        .task-text.completed {
+            text-decoration: line-through;
+            color: var(--gray);
+        }
+
+        .daily-badge {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            margin: 0 0.5rem;
+        }
+
+        .delete-task {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.25rem;
+        }
+
+        .note-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            position: relative;
+            border-left: 3px solid var(--primary);
+        }
+
+        .delete-note {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .memory-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .memory-output {
+            margin-top: 1.5rem;
+        }
+
+        .citation-input {
+            margin-bottom: 1rem;
+        }
+
+        pre {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            margin-top: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Tablet styles */
+        @media (min-width: 768px) {
+            .container {
+                padding: 2rem;
+            }
+
+            .sidebar {
+                position: relative;
+                top: 0;
+                right: 0;
+                width: 100%;
+                max-width: 320px;
+                height: auto;
+                border-left: none;
+                border-radius: 16px;
+                margin-bottom: 1.5rem;
+            }
+
+            .sidebar.open {
+                right: 0;
+            }
+
+            .sidebar-toggle {
+                display: none;
+            }
+
+            .main-layout {
+                display: flex;
+                gap: 1.5rem;
+            }
+
+            .main-content {
+                flex: 1;
+            }
+
+            .sidebar-wrapper {
+                width: 320px;
+            }
+        }
+
+        /* Desktop styles */
+        @media (min-width: 1024px) {
+            .container {
+                padding: 2rem;
+            }
+
+            .tabs {
+                gap: 1rem;
+            }
+
+            .tab-button {
+                min-width: 140px;
+            }
+
+            .stats-grid {
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1.25rem;
+            }
+
+            .stat-number {
+                font-size: 1.75rem;
+            }
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .tabs {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(200%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success);
+        }
+
+        .notification.error {
+            background: var(--danger);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 997;
+            display: none;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">🌱 StudyLab</div>
+            <div class="user-info" id="userInfo">
+                <span id="usernameDisplay"></span>
+                <button class="btn btn-danger" id="logoutBtn" style="display: none;">Logout</button>
+            </div>
+        </header>
+
+        <!-- Auth Modal -->
+        <div class="auth-modal" id="authModal">
+            <div class="auth-container">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" data-tab="login">Login</div>
+                    <div class="auth-tab" data-tab="register">Register</div>
+                </div>
+                
+                <!-- Login Form -->
+                <div id="loginForm">
+                    <div class="form-group">
+                        <label for="loginUsername">Username</label>
+                        <input type="text" id="loginUsername" placeholder="Enter username">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter password">
+                    </div>
+                    <button class="btn btn-primary" id="loginSubmit">Login</button>
+                </div>
+                
+                <!-- Register Form -->
+                <div id="registerForm" class="hidden">
+                    <div class="form-group">
+                        <label for="registerUsername">Username</label>
+                        <input type="text" id="registerUsername" placeholder="Choose username">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" placeholder="Choose password">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" placeholder="Confirm password">
+                    </div>
+                    <button class="btn btn-primary" id="registerSubmit">Register</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content (shown after login) -->
+        <div id="mainContent" class="hidden">
+            <!-- Navigation Tabs -->
+            <div class="tabs">
+                <button class="tab-button active" data-tab="dashboard">📊 Dashboard</button>
+                <button class="tab-button" data-tab="notes">📝 Notes</button>
+                <button class="tab-button" data-tab="tasks">🎯 Tasks</button>
+                <button class="tab-button" data-tab="memory">🧠 Memory</button>
+                <button class="tab-button" data-tab="citations">📚 Citations</button>
+            </div>
+
+            <!-- Main Layout -->
+            <div class="main-layout">
+                <div class="main-content">
+                    <!-- Dashboard Tab -->
+                    <div class="tab-content active" id="dashboardTab">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">📊 Dashboard</h2>
+                            </div>
+                            <div id="dashboardContent">
+                                <h3>📅 <span id="currentDate"></span></h3>
+                                <h4>Daily Tasks: <span id="dailyProgressText">0/0 completed</span></h4>
+                                <div class="progress-container">
+                                    <div class="progress-bar" id="dailyProgressBar" style="width: 0%"></div>
+                                </div>
+                                <h4>Recent Activity</h4>
+                                <p>Recent activity tracking will be added in future updates</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notes Tab -->
+                    <div class="tab-content hidden" id="notesTab">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">📝 Notes</h2>
+                            </div>
+                            <div class="form-group">
+                                <textarea id="noteInput" placeholder="Write your note..." rows="3"></textarea>
+                            </div>
+                            <button class="btn btn-primary" id="addNoteBtn">➕ Add Note</button>
+                            <div id="notesList" class="task-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- Tasks Tab -->
+                    <div class="tab-content hidden" id="tasksTab">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">🎯 Tasks</h2>
+                            </div>
+                            
+                            <!-- Task Tabs -->
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                                <button class="tab-button active" data-task-tab="regular">Regular Tasks</button>
+                                <button class="tab-button" data-task-tab="daily">Daily Tasks</button>
+                            </div>
+                            
+                            <!-- Regular Tasks -->
+                            <div class="task-tab-content active" id="regularTasksTab">
+                                <div class="form-row">
+                                    <input type="text" id="taskInput" placeholder="Add a new task...">
+                                    <button class="btn btn-primary" id="addTaskBtn" style="flex: 0 0 auto; padding: 0 1rem;">➕</button>
+                                </div>
+                                <div id="tasksList" class="task-list"></div>
+                            </div>
+                            
+                            <!-- Daily Tasks -->
+                            <div class="task-tab-content hidden" id="dailyTasksTab">
+                                <div class="form-row">
+                                    <input type="text" id="dailyTaskInput" placeholder="Add a daily task...">
+                                    <button class="btn btn-primary" id="addDailyTaskBtn" style="flex: 0 0 auto; padding: 0 1rem;">➕</button>
+                                </div>
+                                <div id="dailyTasksList" class="task-list"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Memory Tab -->
+                    <div class="tab-content hidden" id="memoryTab">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">🧠 Memory Practice</h2>
+                            </div>
+                            <div class="form-group">
+                                <textarea id="memorizeInput" placeholder="Paste text to practice memorization..." rows="5"></textarea>
+                            </div>
+                            <button class="btn btn-primary" id="practiceMemoryBtn">🧠 Practice Memory</button>
+                            <div id="memoryOutput" class="memory-output hidden">
+                                <h4>Practice Version:</h4>
+                                <textarea id="practiceText" rows="5" readonly></textarea>
+                                <div style="margin-top: 1rem;">
+                                    <button class="btn" id="showOriginalBtn">🔍 Show Original</button>
+                                    <div id="originalTextContainer" class="hidden" style="margin-top: 1rem;">
+                                        <h4>Original Text:</h4>
+                                        <textarea id="originalText" rows="5" readonly></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Citations Tab -->
+                    <div class="tab-content hidden" id="citationsTab">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">📚 Citation Generator</h2>
+                            </div>
+                            <div class="citation-input">
+                                <input type="text" id="citationUrl" placeholder="Enter URL for citation (e.g. https://example.com/article)">
+                            </div>
+                            <button class="btn btn-primary" id="generateCitationBtn">🔗 Generate Citation</button>
+                            <div id="citationOutput" class="hidden" style="margin-top: 1rem;">
+                                <h4>Citation:</h4>
+                                <pre id="citationText"></pre>
+                                <button class="copy-btn" id="copyCitationBtn">📋 Copy Citation</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar for larger screens -->
+                <div class="sidebar-wrapper">
+                    <div class="sidebar" id="sidebar">
+                        <button class="close-sidebar" id="closeSidebar">×</button>
+                        <h2>🏝️ Island Progress</h2>
+                        <div class="island-progress">
+                            <div class="island-emoji" id="islandEmoji">🏝️</div>
+                            <div class="level-display">Level <span id="levelDisplay">1</span></div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="xpProgressBar" style="width: 0%"></div>
+                        </div>
+                        <div style="text-align: center; color: var(--gray); font-size: 0.9rem; margin-bottom: 1rem;">
+                            <span id="xpDisplay">0</span> / <span id="xpNeededDisplay">100</span> XP
+                        </div>
+                        <h4 style="margin-top: 1.5rem;">📊 Your Stats</h4>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-number" id="notesCount">0</div>
+                                <div class="stat-label">Notes</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="completedCount">0</div>
+                                <div class="stat-label">Done</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="xpCount">0</div>
+                                <div class="stat-label">XP</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // App State
+        let currentUser = null;
+        let users = JSON.parse(localStorage.getItem('studyLabUsers')) || {};
+        let activeTab = 'dashboard';
+        let activeTaskTab = 'regular';
+
+        // XP Constants
+        const XP_PER_NOTE = 10;
+        const XP_PER_TASK = 5;
+        const XP_PER_TASK_COMPLETION = 15;
+        const LEVEL_UP_XP = 100;
+
+        // DOM Elements
+        const authModal = document.getElementById('authModal');
+        const mainContent = document.getElementById('mainContent');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const userInfo = document.getElementById('userInfo');
+        const usernameDisplay = document.getElementById('usernameDisplay');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const closeSidebar = document.getElementById('closeSidebar');
+        const overlay = document.getElementById('overlay');
+        const notification = document.getElementById('notification');
+
+        // Initialize App
+        function initApp() {
+            updateDateTime();
+            checkAuthStatus();
+            setupEventListeners();
+        }
+
+        // Update Date and Time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        // Check Authentication Status
+        function checkAuthStatus() {
+            const loggedInUser = localStorage.getItem('studyLabCurrentUser');
+            if (loggedInUser && users[loggedInUser]) {
+                loginUser(loggedInUser);
+            } else {
+                showAuthModal();
+            }
+        }
+
+        // Show Auth Modal
+        function showAuthModal() {
+            authModal.style.display = 'flex';
+            mainContent.classList.add('hidden');
+        }
+
+        // Hide Auth Modal
+        function hideAuthModal() {
+            authModal.style.display = 'none';
+            mainContent.classList.remove('hidden');
+        }
+
+        // Login User
+        function loginUser(username) {
+            currentUser = username;
+            localStorage.setItem('studyLabCurrentUser', username);
+            usernameDisplay.textContent = username;
+            logoutBtn.style.display = 'block';
+            hideAuthModal();
+            resetDailyTasks();
+            updateUI();
+        }
+
+        // Logout User
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem('studyLabCurrentUser');
+            usernameDisplay.textContent = '';
+            logoutBtn.style.display = 'none';
+            showAuthModal();
+        }
+
+        // Reset Daily Tasks
+        function resetDailyTasks() {
+            if (!currentUser) return;
+            
+            const user = users[currentUser];
+            const today = new Date().toDateString();
+            const lastLogin = user.lastLogin || '';
+            
+            if (lastLogin !== today) {
+                user.daily_tasks.forEach(task => {
+                    task.completed = false;
+                });
+                user.lastLogin = today;
+                saveUsers();
+            }
+        }
+
+        // Save Users to LocalStorage
+        function saveUsers() {
+            localStorage.setItem('studyLabUsers', JSON.stringify(users));
+        }
+
+        // Hash Password
+        function hashPassword(password) {
+            return btoa(password); // Simple base64 encoding for demo purposes
+        }
+
+        // Initialize User Data
+        function initUserData(username) {
+            return {
+                password: '',
+                notes: [],
+                tasks: [],
+                daily_tasks: [],
+                xp: 0,
+                level: 1,
+                memorize_text: '',
+                practice_text: '',
+                lastLogin: new Date().toDateString()
+            };
+        }
+
+        // Add XP
+        function addXP(amount) {
+            if (!currentUser) return;
+            
+            users[currentUser].xp += amount;
+            const user = users[currentUser];
+            if (user.xp >= user.level * LEVEL_UP_XP) {
+                user.level += 1;
+                user.xp = user.xp - (user.level - 1) * LEVEL_UP_XP;
+                showNotification('Level up! 🎉', 'success');
+            }
+            saveUsers();
+            updateStats();
+        }
+
+        // Show Notification
+        function showNotification(message, type = 'success') {
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Update UI
+        function updateUI() {
+            updateStats();
+            updateTabs();
+            updateTasks();
+            updateNotes();
+        }
+
+        // Update Stats
+        function updateStats() {
+            if (!currentUser) return;
+            
+            const user = users[currentUser];
+            const level = user.level;
+            const xp = user.xp;
+            const xpNeeded = level * LEVEL_UP_XP;
+            const xpPercent = Math.min(100, (xp / xpNeeded) * 100);
+            
+            // Island emoji
+            const islandEmojis = {
+                1: '🏝️',
+                2: '🏝️🏝️',
+                3: '🏝️🏝️🏝️',
+                4: '🏝️🏝️🏝️🏝️',
+                5: '🏝️🏝️🏝️🏝️🏝️'
+            };
+            const islandEmoji = islandEmojis[level] || '🏝️'.repeat(Math.min(level, 10));
+            
+            document.getElementById('islandEmoji').textContent = islandEmoji;
+            document.getElementById('levelDisplay').textContent = level;
+            document.getElementById('xpProgressBar').style.width = `${xpPercent}%`;
+            document.getElementById('xpDisplay').textContent = xp;
+            document.getElementById('xpNeededDisplay').textContent = xpNeeded;
+            document.getElementById('xpCount').textContent = xp;
+            
+            // Notes count
+            document.getElementById('notesCount').textContent = user.notes.length;
+            
+            // Completed tasks count
+            const completedRegular = user.tasks.filter(t => t.completed).length;
+            const completedDaily = user.daily_tasks.filter(t => t.completed).length;
+            document.getElementById('completedCount').textContent = completedRegular + completedDaily;
+            
+            // Daily tasks progress
+            const totalDaily = user.daily_tasks.length;
+            const completedDailyTasks = user.daily_tasks.filter(t => t.completed).length;
+            document.getElementById('dailyProgressText').textContent = `${completedDailyTasks}/${totalDaily} completed`;
+            const dailyPercent = totalDaily > 0 ? (completedDailyTasks / totalDaily) * 100 : 0;
+            document.getElementById('dailyProgressBar').style.width = `${dailyPercent}%`;
+        }
+
+        // Update Tabs
+        function updateTabs() {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            document.getElementById(`${activeTab}Tab`).classList.remove('hidden');
+            
+            document.querySelectorAll('.tab-button[data-tab]').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.tab === activeTab) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Update Tasks
+        function updateTasks() {
+            if (!currentUser) return;
+            
+            const user = users[currentUser];
+            
+            // Update regular tasks
+            const tasksList = document.getElementById('tasksList');
+            tasksList.innerHTML = '';
+            user.tasks.forEach((task, index) => {
+                const taskElement = document.createElement('div');
+                taskElement.className = 'task-item';
+                taskElement.innerHTML = `
+                    <span class="task-status">${task.completed ? '✅' : '⭕'}</span>
+                    <div class="task-text ${task.completed ? 'completed' : ''}">${task.text}</div>
+                    <button class="delete-task" data-index="${index}" data-type="regular">✕</button>
+                `;
+                tasksList.appendChild(taskElement);
+            });
+            
+            // Update daily tasks
+            const dailyTasksList = document.getElementById('dailyTasksList');
+            dailyTasksList.innerHTML = '';
+            user.daily_tasks.forEach((task, index) => {
+                const taskElement = document.createElement('div');
+                taskElement.className = 'task-item';
+                taskElement.innerHTML = `
+                    <span class="task-status">${task.completed ? '✅' : '⭕'}</span>
+                    <div class="task-text ${task.completed ? 'completed' : ''}">
+                        ${task.text} <span class="daily-badge">DAILY</span>
+                    </div>
+                    <button class="delete-task" data-index="${index}" data-type="daily">✕</button>
+                `;
+                dailyTasksList.appendChild(taskElement);
+            });
+            
+            // Update task tabs
+            document.querySelectorAll('.task-tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            document.getElementById(`${activeTaskTab}TasksTab`).classList.remove('hidden');
+        }
+
+        // Update Notes
+        function updateNotes() {
+            if (!currentUser) return;
+            
+            const user = users[currentUser];
+            const notesList = document.getElementById('notesList');
+            notesList.innerHTML = '';
+            
+            if (user.notes.length === 0) {
+                notesList.innerHTML = '<p>No notes yet. Start by adding your first note above!</p>';
+                return;
+            }
+            
+            user.notes.forEach((note, index) => {
+                const noteElement = document.createElement('div');
+                noteElement.className = 'note-card';
+                noteElement.innerHTML = `
+                    <div>${note}</div>
+                    <button class="delete-note" data-index="${index}">✕</button>
+                `;
+                notesList.appendChild(noteElement);
+            });
+        }
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            // Auth Tabs
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const tabType = tab.dataset.tab;
+                    loginForm.classList.toggle('hidden', tabType !== 'login');
+                    registerForm.classList.toggle('hidden', tabType !== 'register');
+                });
+            });
+
+            // Login Form
+            document.getElementById('loginSubmit').addEventListener('click', () => {
+                const username = document.getElementById('loginUsername').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                if (users[username] && users[username].password === hashPassword(password)) {
+                    loginUser(username);
+                } else {
+                    showNotification('Invalid username or password', 'error');
+                }
+            });
+
+            // Register Form
+            document.getElementById('registerSubmit').addEventListener('click', () => {
+                const username = document.getElementById('registerUsername').value;
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                if (password !== confirmPassword) {
+                    showNotification('Passwords do not match', 'error');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    showNotification('Password must be at least 6 characters', 'error');
+                    return;
+                }
+                
+                if (username.length < 3) {
+                    showNotification('Username must be at least 3 characters', 'error');
+                    return;
+                }
+                
+                if (users[username]) {
+                    showNotification('Username already exists', 'error');
+                    return;
+                }
+                
+                users[username] = initUserData(username);
+                users[username].password = hashPassword(password);
+                saveUsers();
+                showNotification('Account created successfully! Please log in.', 'success');
+                
+                // Switch to login tab
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                document.querySelector('.auth-tab[data-tab="login"]').classList.add('active');
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            });
+
+            // Logout Button
+            logoutBtn.addEventListener('click', logoutUser);
+
+            // Main Tabs
+            document.querySelectorAll('.tab-button[data-tab]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    activeTab = btn.dataset.tab;
+                    updateTabs();
+                });
+            });
+
+            // Task Tabs
+            document.querySelectorAll('.tab-button[data-task-tab]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    activeTaskTab = btn.dataset.taskTab;
+                    document.querySelectorAll('.tab-button[data-task-tab]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    updateTasks();
+                });
+            });
+
+            // Add Note
+            document.getElementById('addNoteBtn').addEventListener('click', () => {
+                if (!currentUser) return;
+                
+                const noteInput = document.getElementById('noteInput');
+                const noteText = noteInput.value.trim();
+                
+                if (noteText) {
+                    users[currentUser].notes.push(noteText);
+                    addXP(XP_PER_NOTE);
+                    saveUsers();
+                    noteInput.value = '';
+                    updateNotes();
+                    updateStats();
+                    showNotification('Note added! +10 XP', 'success');
+                } else {
+                    showNotification('Please enter some text for your note.', 'error');
+                }
+            });
+
+            // Add Regular Task
+            document.getElementById('addTaskBtn').addEventListener('click', () => {
+                if (!currentUser) return;
+                
+                const taskInput = document.getElementById('taskInput');
+                const taskText = taskInput.value.trim();
+                
+                if (taskText) {
+                    users[currentUser].tasks.push({
+                        text: taskText,
+                        completed: false
+                    });
+                    addXP(XP_PER_TASK);
+                    saveUsers();
+                    taskInput.value = '';
+                    updateTasks();
+                    updateStats();
+                    showNotification('Task added! +5 XP', 'success');
+                } else {
+                    showNotification('Please enter a task description.', 'error');
+                }
+            });
+
+            // Add Daily Task
+            document.getElementById('addDailyTaskBtn').addEventListener('click', () => {
+                if (!currentUser) return;
+                
+                const taskInput = document.getElementById('dailyTaskInput');
+                const taskText = taskInput.value.trim();
+                
+                if (taskText) {
+                    users[currentUser].daily_tasks.push({
+                        text: taskText,
+                        completed: false
+                    });
+                    addXP(XP_PER_TASK);
+                    saveUsers();
+                    taskInput.value = '';
+                    updateTasks();
+                    updateStats();
+                    showNotification('Daily task added! +5 XP', 'success');
+                } else {
+                    showNotification('Please enter a daily task description.', 'error');
+                }
+            });
+
+            // Task Completion Toggle
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('task-status')) {
+                    if (!currentUser) return;
+                    
+                    const taskItem = e.target.closest('.task-item');
+                    const index = parseInt(taskItem.querySelector('.delete-task').dataset.index);
+                    const type = taskItem.querySelector('.delete-task').dataset.type;
+                    
+                    if (type === 'regular') {
+                        users[currentUser].tasks[index].completed = !users[currentUser].tasks[index].completed;
+                        if (users[currentUser].tasks[index].completed) {
+                            addXP(XP_PER_TASK_COMPLETION);
+                            showNotification('Task completed! +' + XP_PER_TASK_COMPLETION + ' XP', 'success');
+                        } else {
+                            users[currentUser].xp = Math.max(0, users[currentUser].xp - XP_PER_TASK_COMPLETION);
+                            showNotification('Task undone', 'success');
+                        }
+                    } else {
+                        users[currentUser].daily_tasks[index].completed = !users[currentUser].daily_tasks[index].completed;
+                        if (users[currentUser].daily_tasks[index].completed) {
+                            addXP(XP_PER_TASK_COMPLETION);
+                            showNotification('Daily task completed! +' + XP_PER_TASK_COMPLETION + ' XP', 'success');
+                        } else {
+                            users[currentUser].xp = Math.max(0, users[currentUser].xp - XP_PER_TASK_COMPLETION);
+                            showNotification('Daily task undone', 'success');
+                        }
+                    }
+                    
+                    saveUsers();
+                    updateTasks();
+                    updateStats();
+                }
+            });
+
+            // Delete Task
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('delete-task')) {
+                    if (!currentUser) return;
+                    
+                    const index = parseInt(e.target.dataset.index);
+                    const type = e.target.dataset.type;
+                    
+                    if (type === 'regular') {
+                        users[currentUser].tasks.splice(index, 1);
+                    } else {
+                        users[currentUser].daily_tasks.splice(index, 1);
+                    }
+                    
+                    saveUsers();
+                    updateTasks();
+                    updateStats();
+                    showNotification('Task deleted', 'success');
+                }
+            });
+
+            // Delete Note
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('delete-note')) {
+                    if (!currentUser) return;
+                    
+                    const index = parseInt(e.target.dataset.index);
+                    users[currentUser].notes.splice(index, 1);
+                    saveUsers();
+                    updateNotes();
+                    updateStats();
+                    showNotification('Note deleted', 'success');
+                }
+            });
+
+            // Practice Memory
+            document.getElementById('practiceMemoryBtn').addEventListener('click', () => {
+                const inputText = document.getElementById('memorizeInput').value.trim();
+                
+                if (inputText) {
+                    users[currentUser].memorize_text = inputText;
+                    
+                    // Split text into words
+                    const words = inputText.match(/\S+/g) || [];
+                    
+                    if (words.length > 3) {
+                        // Calculate how many words to hide (30%)
+                        const numToHide = Math.max(1, Math.floor(words.length * 0.3));
+                        
+                        // Randomly select indices to hide
+                        const indicesToHide = [];
+                        while (indicesToHide.length < numToHide) {
+                            const randomIndex = Math.floor(Math.random() * words.length);
+                            if (!indicesToHide.includes(randomIndex)) {
+                                indicesToHide.push(randomIndex);
+                            }
+                        }
+                        
+                        // Create practice text
+                        const practiceWords = words.map((word, index) => {
+                            if (indicesToHide.includes(index)) {
+                                // Preserve punctuation at the end of hidden words
+                                let punctuation = "";
+                                let cleanWord = word;
+                                if (word && /[.,!?;:]$/.test(word)) {
+                                    punctuation = word.slice(-1);
+                                    cleanWord = word.slice(0, -1);
+                                }
+                                
+                                // Create blanks with same length as original word
+                                const blankLength = cleanWord.length;
+                                return "_".repeat(Math.max(blankLength, 3)) + punctuation;
+                            }
+                            return word;
+                        });
+                        
+                        users[currentUser].practice_text = practiceWords.join(" ");
+                    } else {
+                        users[currentUser].practice_text = inputText;
+                    }
+                    
+                    saveUsers();
+                    
+                    // Update UI
+                    document.getElementById('practiceText').value = users[currentUser].practice_text;
+                    document.getElementById('originalText').value = users[currentUser].memorize_text;
+                    document.getElementById('memoryOutput').classList.remove('hidden');
+                } else {
+                    showNotification('Please enter some text to practice.', 'error');
+                }
+            });
+
+            // Show Original Text
+            document.getElementById('showOriginalBtn').addEventListener('click', () => {
+                const container = document.getElementById('originalTextContainer');
+                container.classList.toggle('hidden');
+                this.textContent = container.classList.contains('hidden') ? '🔍 Show Original' : '🔍 Hide Original';
+            });
+
+            // Generate Citation
+            document.getElementById('generateCitationBtn').addEventListener('click', async () => {
+                const url = document.getElementById('citationUrl').value.trim();
+                
+                if (!url) {
+                    showNotification('Please enter a URL.', 'error');
+                    return;
+                }
+                
+                try {
+                    // In a real app, you would use a backend service for this
+                    // For demo purposes, we'll simulate a citation
+                    const domain = url.replace(/^https?:\/\//, '').split('/')[0];
+                    const title = "Sample Article Title"; // This would come from scraping
+                    const citation = `${title}. Retrieved from ${domain}`;
+                    
+                    document.getElementById('citationText').textContent = citation;
+                    document.getElementById('citationOutput').classList.remove('hidden');
+                    showNotification('Citation generated successfully!', 'success');
+                } catch (error) {
+                    showNotification('Error generating citation: ' + error.message, 'error');
+                }
+            });
+
+            // Copy Citation
+            document.getElementById('copyCitationBtn').addEventListener('click', () => {
+                const citationText = document.getElementById('citationText').textContent;
+                navigator.clipboard.writeText(citationText).then(() => {
+                    showNotification('Citation copied to clipboard!', 'success');
+                }).catch(() => {
+                    showNotification('Failed to copy citation', 'error');
+                });
+            });
+
+            // Sidebar Toggle
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.add('open');
+                overlay.classList.add('show');
+            });
+
+            // Close Sidebar
+            closeSidebar.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('show');
+            });
+
+            // Close sidebar when clicking overlay
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('show');
+            });
+
+            // Close sidebar on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                }
+            });
+        }
+
+        // Initialize the app when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
