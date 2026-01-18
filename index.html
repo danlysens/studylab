@@ -465,6 +465,7 @@
                 margin-bottom: 1.5rem;
                 background: rgba(255, 255, 255, 0.95);
                 backdrop-filter: none;
+                transition: none;
             }
 
             .sidebar.open {
@@ -573,6 +574,23 @@
 
         .overlay.show {
             display: block;
+        }
+
+        /* Fix for mobile sidebar positioning */
+        @media (max-width: 767px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                max-width: 320px;
+                height: 100%;
+                transition: right 0.3s ease;
+            }
+            
+            .sidebar.open {
+                right: 0;
+            }
         }
     </style>
 </head>
@@ -1393,39 +1411,51 @@
                 });
             });
 
-            // Sidebar Toggle - FIXED!
-            if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', () => {
+            // MOBILE SIDEBAR FUNCTIONALITY - COMPLETELY REWRITTEN
+            function openMobileSidebar() {
+                if (window.innerWidth <= 768) {
                     sidebar.classList.add('open');
                     overlay.classList.add('show');
-                    document.body.style.overflow = 'hidden'; // Prevent scrolling when sidebar is open
-                });
+                    document.body.style.overflow = 'hidden';
+                }
             }
 
-            // Close Sidebar - FIXED!
+            function closeMobileSidebar() {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+
+            // Sidebar Toggle
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', openMobileSidebar);
+            }
+
+            // Close Sidebar
             if (closeSidebar) {
-                closeSidebar.addEventListener('click', () => {
-                    sidebar.classList.remove('open');
-                    overlay.classList.remove('show');
-                    document.body.style.overflow = ''; // Restore scrolling
-                });
+                closeSidebar.addEventListener('click', closeMobileSidebar);
             }
 
-            // Close sidebar when clicking overlay - FIXED!
+            // Close sidebar when clicking overlay
             if (overlay) {
-                overlay.addEventListener('click', () => {
-                    sidebar.classList.remove('open');
-                    overlay.classList.remove('show');
-                    document.body.style.overflow = ''; // Restore scrolling
-                });
+                overlay.addEventListener('click', closeMobileSidebar);
             }
 
-            // Close sidebar on escape key - FIXED!
+            // Close sidebar on escape key
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
-                    sidebar.classList.remove('open');
-                    overlay.classList.remove('show');
-                    document.body.style.overflow = ''; // Restore scrolling
+                    closeMobileSidebar();
+                }
+            });
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 && 
+                    sidebar.classList.contains('open') && 
+                    !sidebar.contains(e.target) && 
+                    e.target !== sidebarToggle &&
+                    !sidebarToggle.contains(e.target)) {
+                    closeMobileSidebar();
                 }
             });
         }
